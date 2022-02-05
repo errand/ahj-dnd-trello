@@ -1,8 +1,5 @@
-import CardsValidator from './CardsValidator';
-import CardsValidatorController from './CardsValidatorController';
+import Trello from './Trello';
 
-const validator = new CardsValidator();
-validator.bindToDOM(document.querySelector('#cards-container'));
-
-const validatorCtrl = new CardsValidatorController(validator);
-validatorCtrl.init();
+const trello = new Trello();
+trello.bindToDOM(document.querySelector('#board'));
+trello.init();

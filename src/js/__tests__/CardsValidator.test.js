@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 
-import CardsValidator from '../CardsValidator';
+import Trello from '../Trello';
 
-const validator = new CardsValidator();
+const validator = new Trello();
 
 /* eslint-disable quotes */
 test('Validate Luhn Algorithm', () => {

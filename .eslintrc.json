@@ -19,7 +19,8 @@
         "no-unused-vars": "off",
         "no-underscore-dangle": "off",
         "max-len": "off",
-        "arrow-parens": "off"
+        "arrow-parens": "off",
+        "class-methods-use-this": "off"
     },
     "plugins": ["babel"],
     "parser": "@babel/eslint-parser"

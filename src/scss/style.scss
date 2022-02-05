@@ -19,7 +19,6 @@ body {
 
 .main-header {
   height: 44px;
-  background: rgba(0, 0, 0, 0.44);
 }
 
 .main-content {
@@ -92,6 +91,16 @@ body {
   position: relative;
   text-decoration: none;
   z-index: 0;
+
+  .popover {
+    position: absolute;
+    top: 5px;
+    right: 24px;
+    background: #fff;
+    font-size: 0.85rem;
+    border-radius: 3.5px;
+    z-index: 12;
+  }
 }
 
 .list-card-details {
@@ -99,6 +108,19 @@ body {
   padding: 6px 8px 2px;
   position: relative;
   z-index: 10;
+
+  .icon-close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: none;
+  }
+
+  &:hover {
+    .icon-close {
+      display: block;
+    }
+  }
 }
 
 .card-composer-container {
@@ -143,6 +165,55 @@ body {
   -webkit-user-select: none;
   user-select: none;
   white-space: nowrap;
+}
+
+.card-composer {
+  padding-bottom: 8px;
+}
+
+.list-card-composer-textarea {
+  height: 65px;
+  width: 100%;
+  font-family: inherit;
+  outline: none;
+  resize: none;
+}
+
+button {
+  background-color: #026aa7;
+  border: none;
+  box-shadow: none;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 3px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: darken(#026aa7, 10);
+  }
+}
+
+
+.cc-controls-section {
+  display: flex;
+  align-items: center;
+
+  button {
+    margin-right: 10px;
+  }
+}
+
+.icon-close {
+  width: 16px;
+  opacity: 0.5;
+  &:before {
+    display: block;
+    content: '';
+    width: 16px;
+    height: 16px;
+    background-image: url("data:image/svg+xml,%3Csvg aria-hidden='true' role='img' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 352 512'%3E%3Cpath fill='currentColor' d='M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z' class=''%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+  }
 }
 
 .sr-only {
