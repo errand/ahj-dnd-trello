@@ -193,19 +193,28 @@ export default class Trello {
 
     this.draggedItem.style.display = 'none';
     const pointerPosition = document.elementFromPoint(x, y);
-    console.log(pointerPosition);
-    if (pointerPosition.closest('.list-cards')) {
-      const changingItem = pointerPosition.closest('.list-card');
-      const parent = changingItem.closest('.list-cards') || null;
+    if (pointerPosition.closest('.list')) {
+      if (pointerPosition.closest('.list-card')) {
+        const changingItem = pointerPosition.closest('.list-card');
+        const parent = changingItem.closest('.list-cards');
 
-      if (parent) {
-        if (changingItem) {
-          if (changingItem.nextSibling !== null) {
-            parent.insertBefore(this.selectedItem, changingItem);
-          } else {
-            parent.insertBefore(this.selectedItem, changingItem.nextSibling);
+        if (parent) {
+          if (changingItem) {
+            if (changingItem.nextSibling !== null) {
+              parent.insertBefore(this.selectedItem, changingItem);
+            } else {
+              parent.insertBefore(this.selectedItem, changingItem.nextSibling);
+            }
           }
         }
+      } else {
+        const wrapper = pointerPosition.closest('.list');
+
+        console.log(pointerPosition);
+        console.log(wrapper);
+        const parent = wrapper.querySelector('.list-cards');
+        console.log(parent);
+        parent.appendChild(this.selectedItem);
       }
     }
 
