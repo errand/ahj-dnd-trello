@@ -2,6 +2,10 @@ export default class Trello {
   constructor() {
     this.container = null;
     this.listsTitles = ['TODO', 'In Progress', 'Done'];
+    this.selectedItem = null;
+    this.draggedItem = null;
+    this.startX = 0;
+    this.startY = 0;
     this.storage = window.localStorage;
   }
 
@@ -18,9 +22,16 @@ export default class Trello {
     }
   }
 
+  addEventListeners() {
+    document.addEventListener('mousedown', e => this.dragCard(e));
+    document.addEventListener('mousemove', e => this.moveCard(e));
+    document.addEventListener('mouseup', e => this.dropCard(e));
+  }
+
   init() {
     this.checkBinding();
-    if (this.storage.getItem('lists') !== null) {
+    this.addEventListeners();
+    if (this.storage.getItem('boardLists') !== null) {
       this.loadFromLocalStorage();
     } else {
       this.drawTest();
@@ -58,7 +69,7 @@ export default class Trello {
     const cardComposer = parent.querySelector('.card-composer-container');
     const cardController = document.createElement('div');
     cardController.classList.add('card-composer');
-    cardController.innerHTML = `<div class="list-card">
+    cardController.innerHTML = `<div class="list-card-composer">
           <div class="list-card-details">
             <textarea class="list-card-composer-textarea" placeholder="Ввести заголовок для этой карточки"></textarea>
           </div>
@@ -104,8 +115,6 @@ export default class Trello {
 
   createCard(board, text) {
     const parent = this.container.querySelector(`[data-board-id="${board}"]`);
-
-    console.log(board);
     const cards = parent.querySelector('.list-cards');
     const card = document.createElement('div');
     card.classList.add('list-card');
@@ -130,6 +139,85 @@ export default class Trello {
     this.saveToLocalStorage();
   }
 
+  dragCard(e) {
+    if (e.target.classList.contains('icon-close') || e.target.classList.contains('popover_confirm') || e.target.classList.contains('popover_cancel')) {
+      return;
+    }
+    const card = e.target.closest('.list-card');
+    if (!card) {
+      return;
+    }
+    this.selectedItem = card;
+    this.selectedItem.classList.add('card-selected');
+    this.draggedItem = this.selectedItem.cloneNode(true);
+    this.draggedItem.classList.add('card-cloned');
+    this.draggedItem.classList.remove('card-selected');
+
+    const width = this.selectedItem.clientWidth;
+    const height = this.selectedItem.clientHeight;
+    const rect = this.selectedItem.getBoundingClientRect();
+    const { scrollLeft, scrollTop } = document.body;
+    const left = rect.left + scrollLeft;
+    const top = rect.top + scrollTop;
+    this.startX = e.clientX;
+    this.startY = e.clientY;
+
+    this.draggedItem.style.width = `${width}px`;
+    this.draggedItem.style.height = `${height}px`;
+    this.draggedItem.style.top = `${top}px`;
+    this.draggedItem.style.left = `${left}px`;
+
+    document.body.appendChild(this.draggedItem);
+  }
+
+  moveCard(e) {
+    if (!this.selectedItem) {
+      return;
+    }
+    const rect = this.selectedItem.getBoundingClientRect();
+    const { scrollLeft, scrollTop } = document.body;
+    const left = rect.left + scrollLeft + e.clientX - this.startX;
+    const top = rect.top + scrollTop + e.clientY - this.startY;
+
+    this.draggedItem.style.top = `${top}px`;
+    this.draggedItem.style.left = `${left}px`;
+  }
+
+  dropCard(e) {
+    if (!this.selectedItem) {
+      return;
+    }
+
+    const x = e.clientX;
+    const y = e.clientY;
+
+    this.draggedItem.style.display = 'none';
+    const pointerPosition = document.elementFromPoint(x, y);
+    console.log(pointerPosition);
+    if (pointerPosition.closest('.list-cards')) {
+      const changingItem = pointerPosition.closest('.list-card');
+      const parent = changingItem.closest('.list-cards') || null;
+
+      if (parent) {
+        if (changingItem) {
+          if (changingItem.nextSibling !== null) {
+            parent.insertBefore(this.selectedItem, changingItem);
+          } else {
+            parent.insertBefore(this.selectedItem, changingItem.nextSibling);
+          }
+        }
+      }
+    }
+
+    this.selectedItem.classList.remove('card-selected');
+    this.selectedItem = null;
+
+    this.draggedItem.remove();
+    this.draggedItem = null;
+
+    this.saveToLocalStorage();
+  }
+
   saveToLocalStorage() {
     const lists = this.container.querySelectorAll('.list');
     const obj = [...lists].map(el => ({
@@ -137,7 +225,7 @@ export default class Trello {
       name: el.querySelector('.list-header').innerHTML,
       cards: [...el.querySelectorAll('.list-card')].filter(text => text.innerText.length > 0).map(title => title.innerText),
     }));
-    this.storage.setItem('lists', JSON.stringify(obj));
+    this.storage.setItem('boardLists', JSON.stringify(obj));
   }
 
   getRandomInt() {
@@ -145,7 +233,7 @@ export default class Trello {
   }
 
   loadFromLocalStorage() {
-    const boards = JSON.parse(this.storage.getItem('lists'));
+    const boards = JSON.parse(this.storage.getItem('boardLists'));
     boards.forEach(board => {
       this.createListWrapper(board.name, board.id);
       board.cards.forEach(card => this.createCard(board.id, card));
