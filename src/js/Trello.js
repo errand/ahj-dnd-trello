@@ -36,8 +36,8 @@ export default class Trello {
   createListWrapper(title, id = '') {
     const list = document.createElement('div');
     list.classList.add('list-wrapper');
-    const boardId = id || this.getRandomInt();
-    list.innerHTML = `<div class="list" data-board-id="board${boardId}">
+    const boardId = id || `board${this.getRandomInt()}`;
+    list.innerHTML = `<div class="list" data-board-id="${boardId}">
             <div class="list-header">${title}</div>
             <div class="list-cards">              
             </div>
@@ -103,7 +103,9 @@ export default class Trello {
   }
 
   createCard(board, text) {
-    const parent = this.container.querySelector(`[data-board-id="board${board}"]`);
+    const parent = this.container.querySelector(`[data-board-id="${board}"]`);
+
+    console.log(board);
     const cards = parent.querySelector('.list-cards');
     const card = document.createElement('div');
     card.classList.add('list-card');
@@ -146,8 +148,6 @@ export default class Trello {
     const boards = JSON.parse(this.storage.getItem('lists'));
     boards.forEach(board => {
       this.createListWrapper(board.name, board.id);
-
-      console.log(this.container.querySelector(`[data-board-id="board${board.id}"]`));
       board.cards.forEach(card => this.createCard(board.id, card));
     });
   }
