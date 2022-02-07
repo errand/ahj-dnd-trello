@@ -118,7 +118,7 @@ export default class Trello {
     const cards = parent.querySelector('.list-cards');
     const card = document.createElement('div');
     card.classList.add('list-card');
-    card.innerHTML = `<div class="list-card-details">${text}<span class="icon-close"></span>`;
+    card.innerHTML = `<div class="list-card-details"><div class="text">${text}</div> <span class="icon-close"></span>`;
     card.querySelector('.icon-close').addEventListener('click', evt => this.deleteConfirmation(evt));
     cards.appendChild(card);
     this.saveToLocalStorage();
@@ -174,6 +174,11 @@ export default class Trello {
     if (!this.selectedItem) {
       return;
     }
+    const x = e.clientX;
+    const y = e.clientY;
+    const pointerPosition = document.elementFromPoint(x, y);
+
+    console.log(pointerPosition);
     const rect = this.selectedItem.getBoundingClientRect();
     const { scrollLeft, scrollTop } = document.body;
     const left = rect.left + scrollLeft + e.clientX - this.startX;
@@ -209,11 +214,7 @@ export default class Trello {
         }
       } else {
         const wrapper = pointerPosition.closest('.list');
-
-        console.log(pointerPosition);
-        console.log(wrapper);
         const parent = wrapper.querySelector('.list-cards');
-        console.log(parent);
         parent.appendChild(this.selectedItem);
       }
     }

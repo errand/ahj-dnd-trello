@@ -68,7 +68,7 @@ body {
 .list-cards {
   flex: 1 1 auto;
   margin: 0 4px;
-  min-height: 2rem;
+  min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
   padding: 0 4px;
@@ -81,6 +81,14 @@ body {
   z-index: 0;
 
   padding-bottom: 10px;
+
+  &.changing {
+   &:before{
+     display: block;
+     content: '';
+     height: 2rem;
+   }
+  }
 
   &-details {
     background-color: #fff;
@@ -110,12 +118,22 @@ body {
   }
 
   &.card-selected {
-    opacity: 0;
+    .list-card-details {
+      background: darken(#ebecf0, 4);
+      box-shadow: none;
+      .text, .icon-close {
+        opacity: 0;
+      }
+    }
   }
 
   &.card-cloned {
     position: absolute;
     z-index: 99;
+    transform: rotate(-2deg);
+    .text, .list-card-details, .icon-close {
+      cursor: grabbing;
+    }
   }
 
   .popover {
