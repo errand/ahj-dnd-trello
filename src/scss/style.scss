@@ -82,14 +82,6 @@ body {
 
   padding-bottom: 10px;
 
-  &.changing {
-   &:before{
-     display: block;
-     content: '';
-     height: 2rem;
-   }
-  }
-
   &-details {
     background-color: #fff;
     border-radius: 3px;
@@ -195,9 +187,18 @@ body {
   padding-bottom: 8px;
 }
 
+.list-card-composer {
+  .list-card-details {
+    margin-bottom: 4px;
+  }
+}
+
 .list-card-composer-textarea {
   height: 65px;
   width: 100%;
+  max-width: 100%;
+  padding: 0;
+  border: none;
   font-family: inherit;
   outline: none;
   resize: none;

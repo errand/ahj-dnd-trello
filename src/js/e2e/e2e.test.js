@@ -3,7 +3,7 @@ import { fork } from 'child_process';
 
 jest.setTimeout(30000); // default puppeteer timeout
 
-describe('Credit Card Validator form', () => {
+describe('DND', () => {
   let browser = null;
   let page = null;
   let server = null;
@@ -35,11 +35,6 @@ describe('Credit Card Validator form', () => {
 
   test('should add valid class to the form', async () => {
     await page.goto(baseUrl);
-    const form = await page.$('#cardsValidationForm');
-    const input = await form.$('#card_number');
-    await input.type('5318065797202099');
-    const submit = await form.$('#submitform');
-    await submit.click();
-    await page.waitForSelector('#cardsValidationForm.valid');
+    await page.waitForSelector('#board');
   });
 });

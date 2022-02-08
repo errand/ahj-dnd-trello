@@ -174,11 +174,7 @@ export default class Trello {
     if (!this.selectedItem) {
       return;
     }
-    const x = e.clientX;
-    const y = e.clientY;
-    const pointerPosition = document.elementFromPoint(x, y);
 
-    console.log(pointerPosition);
     const rect = this.selectedItem.getBoundingClientRect();
     const { scrollLeft, scrollTop } = document.body;
     const left = rect.left + scrollLeft + e.clientX - this.startX;
