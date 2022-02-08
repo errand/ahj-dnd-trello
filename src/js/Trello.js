@@ -174,11 +174,32 @@ export default class Trello {
     if (!this.selectedItem) {
       return;
     }
+    const x = e.pageX;
+    const y = e.pageY;
 
     const rect = this.selectedItem.getBoundingClientRect();
     const { scrollLeft, scrollTop } = document.body;
-    const left = rect.left + scrollLeft + e.clientX - this.startX;
-    const top = rect.top + scrollTop + e.clientY - this.startY;
+    const left = rect.left + scrollLeft + x - this.startX;
+    const top = rect.top + scrollTop + y - this.startY;
+
+    const pointerPosition = document.elementFromPoint(x, y);
+    const clonedElementPosition = document.elementFromPoint(left - 1, top - 1);
+    const closestCard = clonedElementPosition.closest('.list-card');
+    const closestHeader = clonedElementPosition.closest('.list-header');
+    const closestFooter = clonedElementPosition.closest('.card-composer-container');
+
+    if (closestCard && closestCard !== this.selectedItem) {
+      const closestRect = closestCard.getBoundingClientRect();
+      closestCard.style.borderWidth = '1px';
+      closestCard.style.borderColor = 'red';
+      closestCard.style.borderStyle = 'solid';
+
+      const clonedRect = clonedElementPosition.getBoundingClientRect();
+      console.log(closestRect);
+      console.log(y);
+      const listCards = closestCard.closest('.list-cards');
+      // listCards.insertBefore(this.selectedItem, closestCard);
+    }
 
     this.draggedItem.style.top = `${top}px`;
     this.draggedItem.style.left = `${left}px`;
