@@ -182,20 +182,22 @@ export default class Trello {
     const left = this.selectedItemRect.left + scrollLeft + x - this.startX;
     const top = this.selectedItemRect.top + scrollTop + y - this.startY;
 
-    const pointerPosition = document.elementFromPoint(x, y);
-    const outsideClonedElement = document.elementFromPoint(left - 1, top - 1);
+    const outsideClonedElement = document.elementFromPoint(left + 10, top - 1);
     const closestCard = outsideClonedElement.closest('.list-card');
     const closestHeader = outsideClonedElement.closest('.list-header');
-    const closestFooter = outsideClonedElement.closest('.card-composer-container');
 
     if (closestCard && closestCard !== this.selectedItem) {
       const closestRect = closestCard.getBoundingClientRect();
-      const listCards = closestCard.closest('.list-cards');
+      const parent = closestCard.closest('.list-cards');
       if (y - 20 === closestRect.y) {
-        listCards.insertBefore(this.selectedItem, closestCard);
+        parent.insertBefore(this.selectedItem, closestCard);
       } else if (y - 20 < closestRect.y) {
-        listCards.insertBefore(this.selectedItem, closestCard.nextSibling);
+        parent.insertBefore(this.selectedItem, closestCard.nextSibling);
       }
+    } else if (!closestCard && closestHeader && closestCard !== this.selectedItem) {
+      const wrapper = closestHeader.closest('.list-wrapper');
+      const parent = wrapper.querySelector('.list-cards');
+      parent.prepend(this.selectedItem);
     }
 
     this.draggedItem.style.top = `${top}px`;
