@@ -3,6 +3,7 @@ export default class Trello {
     this.container = null;
     this.listsTitles = ['TODO', 'In Progress', 'Done'];
     this.selectedItem = null;
+    this.selectedItemRect = null;
     this.draggedItem = null;
     this.startX = 0;
     this.startY = 0;
@@ -148,17 +149,16 @@ export default class Trello {
       return;
     }
     this.selectedItem = card;
-    this.selectedItem.classList.add('card-selected');
     this.draggedItem = this.selectedItem.cloneNode(true);
     this.draggedItem.classList.add('card-cloned');
-    this.draggedItem.classList.remove('card-selected');
+    this.selectedItem.classList.add('card-selected');
 
     const width = this.selectedItem.clientWidth;
     const height = this.selectedItem.clientHeight;
-    const rect = this.selectedItem.getBoundingClientRect();
+    this.selectedItemRect = this.selectedItem.getBoundingClientRect();
     const { scrollLeft, scrollTop } = document.body;
-    const left = rect.left + scrollLeft;
-    const top = rect.top + scrollTop;
+    const left = this.selectedItemRect.left + scrollLeft;
+    const top = this.selectedItemRect.top + scrollTop;
     this.startX = e.clientX;
     this.startY = e.clientY;
 
@@ -171,34 +171,31 @@ export default class Trello {
   }
 
   moveCard(e) {
+    e.preventDefault();
     if (!this.selectedItem) {
       return;
     }
-    const x = e.pageX;
-    const y = e.pageY;
+    const x = e.clientX;
+    const y = e.clientY;
 
-    const rect = this.selectedItem.getBoundingClientRect();
     const { scrollLeft, scrollTop } = document.body;
-    const left = rect.left + scrollLeft + x - this.startX;
-    const top = rect.top + scrollTop + y - this.startY;
+    const left = this.selectedItemRect.left + scrollLeft + x - this.startX;
+    const top = this.selectedItemRect.top + scrollTop + y - this.startY;
 
     const pointerPosition = document.elementFromPoint(x, y);
-    const clonedElementPosition = document.elementFromPoint(left - 1, top - 1);
-    const closestCard = clonedElementPosition.closest('.list-card');
-    const closestHeader = clonedElementPosition.closest('.list-header');
-    const closestFooter = clonedElementPosition.closest('.card-composer-container');
+    const outsideClonedElement = document.elementFromPoint(left - 1, top - 1);
+    const closestCard = outsideClonedElement.closest('.list-card');
+    const closestHeader = outsideClonedElement.closest('.list-header');
+    const closestFooter = outsideClonedElement.closest('.card-composer-container');
 
     if (closestCard && closestCard !== this.selectedItem) {
       const closestRect = closestCard.getBoundingClientRect();
-      closestCard.style.borderWidth = '1px';
-      closestCard.style.borderColor = 'red';
-      closestCard.style.borderStyle = 'solid';
-
-      const clonedRect = clonedElementPosition.getBoundingClientRect();
-      console.log(closestRect);
-      console.log(y);
       const listCards = closestCard.closest('.list-cards');
-      // listCards.insertBefore(this.selectedItem, closestCard);
+      if (y - 20 === closestRect.y) {
+        listCards.insertBefore(this.selectedItem, closestCard);
+      } else if (y - 20 < closestRect.y) {
+        listCards.insertBefore(this.selectedItem, closestCard.nextSibling);
+      }
     }
 
     this.draggedItem.style.top = `${top}px`;
